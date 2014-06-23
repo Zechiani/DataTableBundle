@@ -12,7 +12,7 @@ class DemoController extends Controller
     {   
         $columnBag = new ConfigurationColumnBag();
         $columnBag->addColumn(array('title' => 'ID', 'data' => 'id', 'name' => 'demo.id'));
-        $columnBag->addColumn(array('title' => 'Code', 'data' => 'code', 'name' => 'demo.code', 'searchable' => false));
+        $columnBag->addColumn(array('title' => 'Code', 'data' => 'code', 'name' => 'demo.code'));
         $columnBag->addColumn(array('title' => 'Name', 'data' => 'name', 'name' => 'demo.name'));
 
         $configuration = $this->get('zechiani_data_table.builder')->load('default', $columnBag);

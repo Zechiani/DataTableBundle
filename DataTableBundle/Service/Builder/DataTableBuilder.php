@@ -54,7 +54,7 @@ class DataTableBuilder
     {
         $qb = clone $qb;
         
-        $qb->select("COUNT($alias.id) a_" . uniqid());
+        $qb->select("COUNT($alias.id)");
         $qb->setMaxResults(1);
     
         return $qb->getQuery()->getSingleScalarResult();
