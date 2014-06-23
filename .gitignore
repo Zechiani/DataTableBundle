@@ -1,0 +1,7 @@
+.buildpath
+.project
+.settings/
+phpunit.xml
+phpunit_bootstrap.php
+vendor/
+!.gitkeep

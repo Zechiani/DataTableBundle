@@ -1,0 +1,15 @@
+<html>
+	<head>
+		<script type="text/javascript" src="http://code.jquery.com/jquery-2.1.1.min.js"></script>
+		{% javascripts '@ZechianiDataTableBundle/Resources/public/js/*' %}
+			<script type="text/javascript" src="{{ asset_url }}"></script>
+		{% endjavascripts %}
+		{% stylesheets '@ZechianiDataTableBundle/Resources/public/css/*' %}
+			<link rel="stylesheet" href="{{asset_url}}" type="text/css" media="all" />
+		{% endstylesheets %}
+	</head>
+	<body>
+		{{ dataTableRenderJavascript() }}
+		{{ dataTableRenderTable() }}
+	</body>
+</html>

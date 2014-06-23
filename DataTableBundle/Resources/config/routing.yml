@@ -1,0 +1,7 @@
+demo_zechiani_data_table_index:
+    pattern:  /zechiani-bundle/data-table/
+    defaults: { _controller: ZechianiDataTableBundle:Demo:index }
+
+demo_zechiani_data_table_ajax:
+    pattern:  /zechiani-bundle/data-table/ajax/
+    defaults: { _controller: ZechianiDataTableBundle:Demo:ajax }
