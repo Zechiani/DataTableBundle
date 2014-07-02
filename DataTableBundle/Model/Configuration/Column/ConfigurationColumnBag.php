@@ -26,4 +26,18 @@ class ConfigurationColumnBag extends DataTableParameterBag
     
         $this->set($key, new ConfigurationColumn(new DataTableParameterBag($column)));
     }
+    
+    public function getCallbackList()
+    {
+        return array_filter($this->all(), function(ConfigurationColumn $column) {
+            return $column->getCallback() !== null;
+        });
+    }
+
+    public function getModifierList()
+    {
+        return array_filter($this->all(), function(ConfigurationColumn $column) {
+            return $column->getModifier() !== null;
+        });
+    }
 }

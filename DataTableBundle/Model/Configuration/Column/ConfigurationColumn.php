@@ -6,6 +6,16 @@ use Zechiani\DataTableBundle\Model\DataTableParameterBag;
 
 class ConfigurationColumn extends DataTableParameterBag
 {   
+    /**
+     * @var \Closure
+     */
+    protected $callback;
+    
+    /**
+     * @var \Closure
+     */
+    protected $modifier;
+    
     public function __construct(DataTableParameterBag $request)
     {
         $this->set('cellType', $request->get('cellType', 'td'));
@@ -24,6 +34,43 @@ class ConfigurationColumn extends DataTableParameterBag
         $this->set('visible', $request->get('visible', true) === true);
         $this->set('width', $request->get('type'));
         $this->set('createdCell', $request->get('createdCell'));
+        
+        if (($callback = $request->get('callback', null)) instanceof \Closure) {
+            $this->setCallback($callback);
+        }
+        
+        if (($modifier = $request->get('modifier', null)) instanceof \Closure) {
+            $this->setModifier($modifier);
+        }
     }
 
+    public function setCallback(\Closure $callback)
+    {
+        $this->callback = $callback;
+    }
+    
+    public function getCallback()
+    {
+        return $this->callback;
+    }
+    
+    public function doCallback(array $item)
+    {
+        return call_user_func($this->callback, $item);
+    }
+    
+    public function setModifier(\Closure $modifier)
+    {
+        $this->modifier = $modifier;
+    }
+    
+    public function getModifier()
+    {
+        return $this->modifier;
+    }
+    
+    public function doModify(array $item)
+    {
+        return call_user_func($this->modifier, $item);
+    }
 }

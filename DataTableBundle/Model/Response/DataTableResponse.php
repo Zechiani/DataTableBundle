@@ -13,13 +13,32 @@ class DataTableResponse extends DataTableParameterBag
         $keys = array();
         
         foreach ($configuration->get('columns') as $column) {
-            $keys[] = $column->get('data');
+            $value = $column->get('data');
+            
+            if ($value == null) {
+                continue;
+            }
+            
+            $keys[] = $value;
         }
 
         $result = array();
         
+        $callbackList = $configuration->get('columns')->getCallbackList();
+        $modifierList = $configuration->get('columns')->getModifierList();
+        
         foreach ($data as $item) {
-            $result[] = array_intersect_key($item, array_flip($keys));
+            $item = array_intersect_key($item, array_flip($keys));
+            
+            foreach ($modifierList as $key => $modifier) {
+                $item = $modifier->doModify($item);
+            }
+
+            foreach ($callbackList as $key => $callback) {
+                $item[$key] = $callback->doCallback($item);
+            }
+            
+            $result[] = $item;
         }
 
         $this->set('draw', $request->get('draw'));
