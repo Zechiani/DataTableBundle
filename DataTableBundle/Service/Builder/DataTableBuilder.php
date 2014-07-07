@@ -6,7 +6,11 @@ use Zechiani\DataTableBundle\Service\Loader\DataTableConfigurationLoader;
 use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
 use Doctrine\ORM\QueryBuilder;
 use Zechiani\DataTableBundle\Model\Response\DataTableResponse;
+use Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration;
 
+/**
+ * @name zechiani_data_table.builder
+ */
 class DataTableBuilder
 {
     protected $loader;
@@ -20,20 +24,13 @@ class DataTableBuilder
     {
         $this->loader = $loader;
     }
-
-    public function load($configuration = 'default', ConfigurationColumnBag $columns = null)
-    {
-        return $this->configuration = $this->loader->load($configuration, $columns);
-    }
     
     /**
      * @param QueryBuilder $qb
      * @return \Zechiani\DataTableBundle\Model\Response\DataTableResponse
      */
-    public function build(QueryBuilder $qb)
-    {
-        $this->configuration = $this->configuration ? $this->configuration : $this->loader->load();
-        
+    public function build(DataTableConfiguration $configuration, QueryBuilder $qb)
+    {        
         $alias = $qb->getRootAliases();
         $alias = array_shift($alias);
         
@@ -47,7 +44,7 @@ class DataTableBuilder
         
         $this->addOffset($qb);
         
-        return new DataTableResponse($this->loader->getRequest(), $this->loader->getConfiguration(), $total, $filtered, $qb->getQuery()->getArrayResult());
+        return new DataTableResponse($this->loader->getRequest(), $configuration, $total, $filtered, $qb->getQuery()->getArrayResult());
     }
     
     protected function getTotal(QueryBuilder $qb, $alias)

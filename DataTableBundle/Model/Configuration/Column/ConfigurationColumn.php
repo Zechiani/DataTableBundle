@@ -32,7 +32,7 @@ class ConfigurationColumn extends DataTableParameterBag
         $this->set('title', $request->get('title'));
         $this->set('type', $request->get('type'));
         $this->set('visible', $request->get('visible', true) === true);
-        $this->set('width', $request->get('type'));
+        $this->set('width', $request->get('width'));
         $this->set('createdCell', $request->get('createdCell'));
         
         if (($callback = $request->get('callback', null)) instanceof \Closure) {

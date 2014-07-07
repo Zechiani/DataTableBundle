@@ -41,9 +41,9 @@ class DataTableResponse extends DataTableParameterBag
             $result[] = $item;
         }
 
-        $this->set('draw', $request->get('draw'));
-        $this->set('recordsTotal', $total);
-        $this->set('recordsFiltered', $filtered);
+        $this->set('draw', (int) $request->get('draw'));
+        $this->set('recordsTotal', (int) $total);
+        $this->set('recordsFiltered', (int) $filtered);
         $this->set('data', $result);
     }
 }

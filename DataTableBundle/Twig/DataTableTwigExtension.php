@@ -29,14 +29,18 @@ class DataTableTwigExtension extends \Twig_Extension
         );
     }
     
-    public function dataTableRenderJavascript()
+    public function dataTableRenderJavascript($id = null)
     {
-        return $this->environment->render($this->loader->getTemplate('javascript'), array('configuration' => $this->loader->getConfiguration(), 'id' => $this->loader->getConfiguration()->getId()));
+        if (($configuration = $this->loader->getConfiguration($id)) !== null) {
+            return $this->environment->render($this->loader->getTemplate('javascript'), array('configuration' => $configuration));
+        }
     }
     
-    public function dataTableRenderTable()
+    public function dataTableRenderTable($id = null)
     {
-        return $this->environment->render($this->loader->getTemplate('table'), array('columns' => $this->loader->getConfiguration()->get('columns'), 'id' => $this->loader->getConfiguration()->getId()));
+        if (($configuration = $this->loader->getConfiguration($id)) !== null) {
+            return $this->environment->render($this->loader->getTemplate('table'), array('configuration' => $configuration));
+        }
     }
     
 	/* (non-PHPdoc)

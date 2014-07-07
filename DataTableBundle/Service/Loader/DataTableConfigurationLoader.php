@@ -8,6 +8,9 @@ use Symfony\Component\DependencyInjection\ContainerInterface;
 use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * @name zechiani_data_table.configuration_loader
+ */
 class DataTableConfigurationLoader
 {
     /**
@@ -21,9 +24,9 @@ class DataTableConfigurationLoader
     protected $request;
     
     /**
-     * @var \Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration
+     * @var array
      */
-    protected $configuration;
+    protected $configuration = array();
     
     /**
      * @var array
@@ -67,15 +70,17 @@ class DataTableConfigurationLoader
             $configuration->set('columns', $columns);
         }
         
-        return $this->configuration = $configuration;
+        return $this->configuration[$configuration->getId()] = $configuration;
     }
     
     /**
      * @return \Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration
      */
-    public function getConfiguration()
+    public function getConfiguration($key = null)
     {
-        return $this->configuration;
+        $key = $key ? $key : count($this->configuration) ? array_keys($this->configuration)[0] : null; 
+        
+        return array_key_exists($key, $this->configuration) ? $this->configuration[$key] : null;
     }
     
     /**

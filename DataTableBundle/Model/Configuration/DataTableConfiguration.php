@@ -4,6 +4,7 @@ namespace Zechiani\DataTableBundle\Model\Configuration;
 
 use Zechiani\DataTableBundle\Model\DataTableParameterBag;
 use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
+use Zechiani\DataTableBundle\Model\Configuration\Language\ConfigurationLanguage;
 
 /**
  * @link http://datatables.net/reference/option/
@@ -11,14 +12,14 @@ use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
  class DataTableConfiguration extends DataTableParameterBag
 {
     /**
-     * @var string
+     * @var array
      */
-    protected $id;
-    
-    public function __construct($configuration = array())
+    protected $reserved = array('id' => null, 'cellpadding' => null, 'cellspacing' => null, 'border' => null, 'class' => null);
+
+    public function __construct(array $configuration = array())
     {
         $configuration = new DataTableParameterBag($configuration);
-        
+
         $this->set('autoWidth', $configuration->get('autoWidth'));
         $this->set('deferRender', (string) $configuration->get('deferRender', 'false') === 'true');
         $this->set('info', $configuration->get('info', true) === true);
@@ -26,20 +27,47 @@ use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
         $this->set('ordering', (string) $configuration->get('ordering', 'false') === 'true');
         $this->set('paging', (string) $configuration->get('paging', 'true') === 'true');
         $this->set('processing', (string) $configuration->get('processing', 'true') === 'true');
-        $this->set('scrollX', (string) $configuration->get('scrollX', 'false') === 'true');
+        $this->set('scrollX', $configuration->get('scrollX'));
         $this->set('scrollY', $configuration->get('scrollY'));
         $this->set('searching', (string) $configuration->get('searching', 'true') === 'true');
         $this->set('serverSide', (string) $configuration->get('serverSide', 'false') === 'true');
         $this->set('stateSave', (string) $configuration->get('stateSave', 'false') === 'true');
-        $this->set('pageLength', $configuration->get('pageLength', 10));
-
-        $this->set('columns', new ConfigurationColumnBag($configuration));
+        $this->set('pageLength', (int) $configuration->get('pageLength', 10));
         
-        $this->id = $configuration->get('id', 'dataTable');
+        $this->set('columns', new ConfigurationColumnBag($configuration));
+        $this->set('language', new ConfigurationLanguage($configuration));
+        
+        foreach ($this->reserved as $key => $value) {
+            $this->reserved[$key] = $configuration->get($key);
+        }
+        
+        if ($this->reserved['id'] === null) {
+            $this->reserved['id'] = uniqid('DT');
+        }
     }
     
-    public function getId()
+    public function __call($method, $args)
     {
-        return $this->id;
-    }
+        $set = null;
+        
+        if (strpos($method, 'set') === 0) {
+            $set = true;
+            
+        } elseif (strpos($method, 'get') === 0) {
+            $set = false;
+        }
+        
+        if ($set === null) {
+            $key = $method;
+            
+        } else {
+            $key = lcfirst(substr($method, 3, strlen($method)));
+        }
+
+        if (array_key_exists($key, $this->reserved)) {
+            return $set ? $this->reserved[$key] = reset($args) : $this->reserved[$key]; 
+        }
+        
+        return $set ? $this->set($key, array_shift($args)) : $this->get($key, array_shift($args));
+    }    
 }

@@ -42,7 +42,7 @@ class DataTableParameterBag extends ParameterBag
             }
         });
         
-        $result = json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+        $result = json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $search = $replace = array();
 
         $extract = function($values) use (&$search, &$replace, &$extract) {
@@ -50,12 +50,12 @@ class DataTableParameterBag extends ParameterBag
                 if (is_array($value)) {
                     $extract($value);
 
-                    // function
+                // function
                 } elseif (preg_match('/^function.*/', trim($value))) {
-                    $search[] = sprintf('"%s"', $value);
+                    $search[] = sprintf('"%s"', str_replace("\n", '\n', trim($value)));
                     $replace[] = $value;
 
-                    // 2D array or object notation
+                // 2D array or object notation
                 } elseif (!empty($value) && is_string($value) && is_array(json_decode($value, true)) && json_last_error() == 0) {
                     $search[] = sprintf('"%s"', str_replace(array('"', "\n"), array('\"', '\n'), $value));
                     $replace[] = $value;

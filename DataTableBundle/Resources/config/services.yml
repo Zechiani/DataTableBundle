@@ -1,14 +1,14 @@
 services:
-    zechiani_data_table.configuration_loader:
-        class: Zechiani\DataTableBundle\Service\Loader\DataTableConfigurationLoader
-        arguments: [@service_container]
+  zechiani_data_table.configuration_loader:
+    class: Zechiani\DataTableBundle\Service\Loader\DataTableConfigurationLoader
+    arguments: [@service_container]
 
-    zechiani_data_table.builder:
-        class: Zechiani\DataTableBundle\Service\Builder\DataTableBuilder
-        arguments: [@zechiani_data_table.configuration_loader]
+  zechiani_data_table.builder:
+    class: Zechiani\DataTableBundle\Service\Builder\DataTableBuilder
+    arguments: [@zechiani_data_table.configuration_loader]
 
-    zechiani_data_table.twig.datable_extension:
-        class: Zechiani\DataTableBundle\Twig\DataTableTwigExtension
-        arguments: [@zechiani_data_table.configuration_loader]
-        tags:
-            - { name: twig.extension }
+  zechiani_data_table.twig.datable_extension:
+    class: Zechiani\DataTableBundle\Twig\DataTableTwigExtension
+    arguments: [@zechiani_data_table.configuration_loader]
+    tags:
+      - { name: twig.extension }
