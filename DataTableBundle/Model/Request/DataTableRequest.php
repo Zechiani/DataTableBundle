@@ -7,6 +7,7 @@ use Zechiani\DataTableBundle\Model\DataTableParameterBag;
 use Zechiani\DataTableBundle\Model\Request\Search\RequestSearch;
 use Zechiani\DataTableBundle\Model\Request\Order\RequestOrderBag;
 use Zechiani\DataTableBundle\Model\Request\Column\RequestColumnBag;
+use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
 
 /**
  * @link http://datatables.net/manual/server-side
@@ -42,17 +43,23 @@ class DataTableRequest
         return $this->parameters->get($key);
     }
     
-    public function getSearchColumns()
+    public function getSearchColumns(ConfigurationColumnBag $columns)
     {
         $search = array();
         
-        foreach ($this->get('columns') as $column) {
+        foreach ($this->get('columns') as $key => $column) {
             if ($column->get('searchable') && $column->get('search')->get('regex') == false) {
                 // specific search
                 $value = trim($column->get('search')->get('value'));
                 
                 // global search
                 $value = strlen($value) ? $value : trim($this->get('search')->get('value'));
+                
+                $column = $columns->get($key);
+                
+                if ($column == null) {
+                    continue;
+                }
                 
                 $search[$column->get('name')] = $value;
             }
@@ -61,21 +68,18 @@ class DataTableRequest
         return $search;
     }
     
-    public function getSortColumns()
+    public function getSortColumns(ConfigurationColumnBag $columns)
     {
         $sort = array();
-        $columns = $this->get('columns');
         
         foreach ($this->get('order') as $order) {
-            $columnKey = $order->get('column');
-
-            $column = $columns->get($columnKey);
+            $column = $columns->get($order->get('column'));
             
             if ($column === null) {
                 continue;
             }
             
-            $sort[$column->get('name')] = $order->get('dir');
+            $sort[$column->getOrderByColumn()] = $order->get('dir');
         }
 
         return $sort;

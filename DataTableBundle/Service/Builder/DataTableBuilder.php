@@ -36,14 +36,14 @@ class DataTableBuilder
         
         $total = $this->getTotal($qb, $alias);
         
-        $this->addSearch($qb);
-        $this->addOrder($qb);
-        $this->addLimit($qb);
+        $this->addSearch($qb, $configuration->get('columns'));
+        $this->addOrder($qb, $configuration->get('columns'));
 
         $filtered = $this->getTotal($qb, $alias);
         
+        $this->addLimit($qb);
         $this->addOffset($qb);
-        
+
         return new DataTableResponse($this->loader->getRequest(), $configuration, $total, $filtered, $qb->getQuery()->getArrayResult());
     }
     
@@ -57,16 +57,16 @@ class DataTableBuilder
         return $qb->getQuery()->getSingleScalarResult();
     }
     
-    protected function addSearch(QueryBuilder $qb)
+    protected function addSearch(QueryBuilder $qb, ConfigurationColumnBag $columns)
     {
-        foreach ($this->loader->getRequest()->getSearchColumns() as $column => $value) {
+        foreach ($this->loader->getRequest()->getSearchColumns($columns) as $column => $value) {
             $qb->orWhere($qb->expr()->like($column, $qb->expr()->literal(sprintf('%%%s%%', $value))));            
         }
     }
     
-    protected function addOrder(QueryBuilder $qb)
+    protected function addOrder(QueryBuilder $qb, ConfigurationColumnBag $columns)
     {
-        foreach ($this->loader->getRequest()->getSortColumns() as $column => $order) {
+        foreach ($this->loader->getRequest()->getSortColumns($columns) as $column => $order) {
             $qb->addOrderBy($column, $order);
         }   
     }

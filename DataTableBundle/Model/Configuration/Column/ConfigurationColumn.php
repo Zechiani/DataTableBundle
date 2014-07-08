@@ -16,6 +16,11 @@ class ConfigurationColumn extends DataTableParameterBag
      */
     protected $modifier;
     
+    /**
+     * @var string
+     */
+    protected $orderByColumn;
+    
     public function __construct(DataTableParameterBag $request)
     {
         $this->set('cellType', $request->get('cellType', 'td'));
@@ -41,6 +46,13 @@ class ConfigurationColumn extends DataTableParameterBag
         
         if (($modifier = $request->get('modifier', null)) instanceof \Closure) {
             $this->setModifier($modifier);
+        }
+        
+        if (($orderByColumn = $request->get('orderByColumn', null)) !== null) {
+            $this->setOrderByColumn($orderByColumn);
+            
+        } else {
+            $this->setOrderByColumn($this->get('name'));
         }
     }
 
@@ -72,5 +84,15 @@ class ConfigurationColumn extends DataTableParameterBag
     public function doModify(array $item)
     {
         return call_user_func($this->modifier, $item);
+    }
+    
+    public function setOrderByColumn($orderByColumn)
+    {
+        $this->orderByColumn = $orderByColumn;
+    }
+    
+    public function getOrderByColumn()
+    {
+        return $this->orderByColumn;
     }
 }
