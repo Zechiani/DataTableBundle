@@ -38,7 +38,7 @@ class DataTableBuilder
         
         $this->addSearch($qb, $configuration->get('columns'));
         $this->addOrder($qb, $configuration->get('columns'));
-
+        
         $filtered = $this->getTotal($qb, $alias);
         
         $this->addLimit($qb);
@@ -59,9 +59,13 @@ class DataTableBuilder
     
     protected function addSearch(QueryBuilder $qb, ConfigurationColumnBag $columns)
     {
+        $or = $qb->expr()->orX();
+        
         foreach ($this->loader->getRequest()->getSearchColumns($columns) as $column => $value) {
-            $qb->orWhere($qb->expr()->like($column, $qb->expr()->literal(sprintf('%%%s%%', $value))));            
+            $or->add($qb->expr()->like($column, $qb->expr()->literal(sprintf('%%%s%%', $value))));            
         }
+        
+        $qb->andWhere($or);
     }
     
     protected function addOrder(QueryBuilder $qb, ConfigurationColumnBag $columns)
