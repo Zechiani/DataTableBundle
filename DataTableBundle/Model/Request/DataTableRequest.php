@@ -56,8 +56,8 @@ class DataTableRequest
                 $value = strlen($value) ? $value : trim($this->get('search')->get('value'));
                 
                 $column = $columns->get($key);
-                
-                if ($column == null) {
+
+                if ($column == null | $column->get('searchable') === false) {
                     continue;
                 }
                 

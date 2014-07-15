@@ -30,14 +30,14 @@ class DataTableResponse extends DataTableParameterBag
         foreach ($data as $item) {
             $item = array_intersect_key($item, array_flip($keys));
             
-            foreach ($modifierList as $key => $modifier) {
-                $item = $modifier->doModify($item);
+            foreach ($modifierList as $modifier) {
+                $item[$modifier->get('data')] = $modifier->doModify($item[$modifier->get('data')]);
             }
 
             foreach ($callbackList as $key => $callback) {
                 $item[$key] = $callback->doCallback($item);
             }
-            
+
             $result[] = $item;
         }
 

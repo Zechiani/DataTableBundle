@@ -81,7 +81,7 @@ class ConfigurationColumn extends DataTableParameterBag
         return $this->modifier;
     }
     
-    public function doModify(array $item)
+    public function doModify($item)
     {
         return call_user_func($this->modifier, $item);
     }
