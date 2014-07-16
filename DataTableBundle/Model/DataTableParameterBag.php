@@ -6,6 +6,8 @@ use Symfony\Component\HttpFoundation\ParameterBag;
 
 class DataTableParameterBag extends ParameterBag
 {
+    protected $removeNull = true;
+    
     public function clear()
     {
         $this->parameters = array();
@@ -31,13 +33,15 @@ class DataTableParameterBag extends ParameterBag
     public function __toString()
     {
         $parameters = $this->parameters;
+        
+        $removeNull = $this->removeNull;
     
-        $this->recursive($parameters, function(&$array, $key, &$value) {
+        $this->recursive($parameters, function(&$array, $key, &$value) use ($removeNull) {
             // convert DataTableParameterBag
             $value = $value instanceof DataTableParameterBag ? (string) $value : $value;
 
             // remove null
-            if ($value === null) {
+            if ($value === null && $removeNull) {
                 unset($array[$key]);
             }
         });

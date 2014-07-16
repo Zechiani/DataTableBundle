@@ -8,6 +8,8 @@ use Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration;
 
 class DataTableResponse extends DataTableParameterBag
 {   
+    protected $removeNull = false;
+    
     public function __construct(DataTableRequest $request, DataTableConfiguration $configuration, $total, $filtered, array $data = array())
     {
         $keys = array();
