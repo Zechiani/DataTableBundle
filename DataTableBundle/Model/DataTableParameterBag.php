@@ -39,6 +39,9 @@ class DataTableParameterBag extends ParameterBag
         $this->recursive($parameters, function(&$array, $key, &$value) use ($removeNull) {
             // convert DataTableParameterBag
             $value = $value instanceof DataTableParameterBag ? (string) $value : $value;
+            
+            // convert DateTime
+            $value = $value instanceof \DateTime ? $value->format(DATE_ATOM) : $value;
 
             // remove null
             if ($value === null && $removeNull) {

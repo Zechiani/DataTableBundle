@@ -81,9 +81,9 @@ class ConfigurationColumn extends DataTableParameterBag
         return $this->modifier;
     }
     
-    public function doModify($item)
+    public function doModify($item, $data)
     {
-        return call_user_func($this->modifier, $item);
+        return call_user_func($this->modifier, $item, $data);
     }
     
     public function setOrderByColumn($orderByColumn)

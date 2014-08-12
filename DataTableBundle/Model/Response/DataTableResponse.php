@@ -33,7 +33,7 @@ class DataTableResponse extends DataTableParameterBag
             $item = array_intersect_key($item, array_flip($keys));
             
             foreach ($modifierList as $modifier) {
-                $item[$modifier->get('data')] = $modifier->doModify($item[$modifier->get('data')]);
+                $item[$modifier->get('data')] = $modifier->doModify($item[$modifier->get('data')], $item);
             }
 
             foreach ($callbackList as $key => $callback) {
