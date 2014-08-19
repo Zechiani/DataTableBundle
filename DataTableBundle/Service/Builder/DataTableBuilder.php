@@ -4,15 +4,18 @@ namespace Zechiani\DataTableBundle\Service\Builder;
 
 use Zechiani\DataTableBundle\Service\Loader\DataTableConfigurationLoader;
 use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
-use Doctrine\ORM\QueryBuilder;
 use Zechiani\DataTableBundle\Model\Response\DataTableResponse;
 use Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration;
+use Zechiani\DataTableBundle\Model\Fetcher\FetcherInterface;
 
 /**
  * @name zechiani_data_table.builder
  */
 class DataTableBuilder
 {
+    /**
+     * @var \Zechiani\DataTableBundle\Service\Loader\DataTableConfigurationLoader
+     */
     protected $loader;
     
     /**
@@ -29,63 +32,18 @@ class DataTableBuilder
      * @param QueryBuilder $qb
      * @return \Zechiani\DataTableBundle\Model\Response\DataTableResponse
      */
-    public function build(DataTableConfiguration $configuration, QueryBuilder $qb)
+    public function build(DataTableConfiguration $configuration, FetcherInterface $fetcher)
     {        
-        $alias = $qb->getRootAliases();
-        $alias = array_shift($alias);
+        $total = $fetcher->getTotal();
         
-        $total = $this->getTotal($qb, $alias);
+        $fetcher->addSearch($this->loader->getRequest()->getSearchColumns($configuration->get('columns')));
+        $fetcher->addOrder($this->loader->getRequest()->getSortColumns($configuration->get('columns')));
+                
+        $filtered = $fetcher->getTotal();
         
-        $this->addSearch($qb, $configuration->get('columns'));
-        $this->addOrder($qb, $configuration->get('columns'));
-        
-        $filtered = $this->getTotal($qb, $alias);
-        
-        $this->addLimit($qb);
-        $this->addOffset($qb);
+        $fetcher->addLimit($this->loader->getRequest()->get('length'));
+        $fetcher->addOffset($this->loader->getRequest()->get('start'));
 
-        return new DataTableResponse($this->loader->getRequest(), $configuration, $total, $filtered, $qb->getQuery()->getArrayResult());
-    }
-    
-    protected function getTotal(QueryBuilder $qb, $alias)
-    {
-        $qb = clone $qb;
-        
-        $qb->select("COUNT($alias.id)");
-        $qb->setMaxResults(1);
-    
-        return $qb->getQuery()->getSingleScalarResult();
-    }
-    
-    protected function addSearch(QueryBuilder $qb, ConfigurationColumnBag $columns)
-    {
-        $or = $qb->expr()->orX();
-        
-        foreach ($this->loader->getRequest()->getSearchColumns($columns) as $column => $value) {
-            $or->add($qb->expr()->like($column, $qb->expr()->literal(sprintf('%%%s%%', $value))));            
-        }
-        
-        $qb->andWhere($or);
-    }
-    
-    protected function addOrder(QueryBuilder $qb, ConfigurationColumnBag $columns)
-    {
-        foreach ($this->loader->getRequest()->getSortColumns($columns) as $column => $order) {
-            $qb->addOrderBy($column, $order);
-        }   
-    }
-    
-    protected function addLimit(QueryBuilder $qb)
-    {
-        if ($this->loader->getRequest()->get('length') > 0) {
-            $qb->setMaxResults($this->loader->getRequest()->get('length'));
-        }
-    }
-
-    protected function addOffset(QueryBuilder $qb)
-    {
-        if ($this->loader->getRequest()->get('start') > 0) {
-            $qb->setFirstResult($this->loader->getRequest()->get('start'));
-        }
+        return new DataTableResponse($this->loader->getRequest(), $configuration, $total, $filtered, $fetcher->fetch());
     }
 }

@@ -5,6 +5,7 @@ namespace Zechiani\DataTableBundle\Controller;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Zechiani\DataTableBundle\Model\Configuration\Column\ConfigurationColumnBag;
 use Symfony\Component\HttpFoundation\Response;
+use Zechiani\DataTableBundle\Model\Fetcher\QueryBuilderFetcher;
 
 class DemoController extends Controller
 {
@@ -15,7 +16,7 @@ class DemoController extends Controller
         $columnBag->addColumn(array('title' => 'Code', 'data' => 'code', 'name' => 'demo.code'));
         $columnBag->addColumn(array('title' => 'Name', 'data' => 'name', 'name' => 'demo.name'));
 
-        $configuration = $this->get('zechiani_data_table.builder')->load('default', $columnBag);
+        $configuration = $this->get('zechiani_data_table.configuration_loader')->load('default', $columnBag);
         
         $configuration->set('processing', true);
         $configuration->set('serverSide', true);
@@ -33,9 +34,11 @@ class DemoController extends Controller
         $columnBag->addColumn(array('title' => 'Code', 'data' => 'code', 'name' => 'demo.code'));
         $columnBag->addColumn(array('title' => 'Name', 'data' => 'name', 'name' => 'demo.name'));
     
-        $this->get('zechiani_data_table.builder')->load('default', $columnBag);
-    
-        $response = $this->get('zechiani_data_table.builder')->build($this->getDoctrine()->getManager()->getRepository('ZechianiDataTableBundle:Demo')->createQueryBuilder('demo'));
+        $configuration = $this->container->get('zechiani_data_table.configuration_loader')->load('default', $columnBag);
+        
+        $fetcher = new QueryBuilderFetcher($this->getDoctrine()->getManager()->getRepository('ZechianiDataTableBundle:Demo')->createQueryBuilder('demo'));
+        
+        $response = $this->get('zechiani_data_table.builder')->build($configuration, $fetcher);
     
         return new Response($response, 200, array('Content-Type' => 'application/json'));
     }

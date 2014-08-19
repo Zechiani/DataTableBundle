@@ -19,9 +19,9 @@ interface InterfaceDataTableGenerator
     function load();
     
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return \Zechiani\DataTableBundle\Model\Fetcher
      */
-    function getQueryBuilder();
+    function getFetcher();
     
     /**
      * @return string

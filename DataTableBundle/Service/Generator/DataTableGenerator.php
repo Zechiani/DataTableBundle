@@ -41,9 +41,9 @@ abstract class DataTableGenerator implements InterfaceDataTableGenerator
     
     
     /**
-     * @return \Doctrine\ORM\QueryBuilder
+     * @return \Zechiani\DataTableBundle\Model\Fetcher\FetcherInterface
      */
-    abstract public function getQueryBuilder();
+    abstract public function getFetcher();
     
     /**
      * @return string
@@ -68,7 +68,7 @@ abstract class DataTableGenerator implements InterfaceDataTableGenerator
     {
         $configuration = $this->load();
 
-        $response = $this->container->get('zechiani_data_table.builder')->build($configuration, $this->getQueryBuilder());
+        $response = $this->container->get('zechiani_data_table.builder')->build($configuration, $this->getFetcher());
         
         return new Response($response, Response::HTTP_OK, array('Content-Type' => 'application/json'));
     }

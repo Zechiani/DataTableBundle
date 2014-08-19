@@ -26,7 +26,6 @@ class DataTableRequest
         
         } else {
             $this->parameters = new DataTableParameterBag($request->query->all());
-
         }
         
         $this->parameters->set('draw', $this->parameters->getInt('draw', 1));
