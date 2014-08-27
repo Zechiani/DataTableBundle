@@ -39,7 +39,7 @@ class DataTableResponse extends DataTableParameterBag
             }
            
             foreach ($callbackList as $key => $callback) {
-                $key = strtok($modifier->get('data'), '.');
+                $key = strtok($key, '.');
 
                 $item[$key] = $callback->doCallback($item);
             }
