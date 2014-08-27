@@ -21,7 +21,7 @@ class DataTableResponse extends DataTableParameterBag
                 continue;
             }
             
-            $keys[] = $value;
+            $keys[] = strtok($value, '.');
         }
 
         $result = array();
@@ -31,12 +31,16 @@ class DataTableResponse extends DataTableParameterBag
         
         foreach ($data as $item) {
             $item = array_intersect_key($item, array_flip($keys));
-            
+                        
             foreach ($modifierList as $modifier) {
-                $item[$modifier->get('data')] = $modifier->doModify($item[$modifier->get('data')], $item);
+                $key = strtok($modifier->get('data'), '.');
+                
+                $item[$key] = $modifier->doModify($item[$key], $item);
             }
-
+           
             foreach ($callbackList as $key => $callback) {
+                $key = strtok($modifier->get('data'), '.');
+
                 $item[$key] = $callback->doCallback($item);
             }
 
