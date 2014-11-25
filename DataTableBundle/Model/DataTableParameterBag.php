@@ -42,13 +42,15 @@ class DataTableParameterBag extends ParameterBag
             
             // convert DateTime
             $value = $value instanceof \DateTime ? $value->format(DATE_ATOM) : $value;
+            
+            $value = is_object($value) ? (string) $value : $value;
 
             // remove null
             if ($value === null && $removeNull) {
                 unset($array[$key]);
             }
         });
-        
+
         $result = json_encode($parameters, JSON_UNESCAPED_SLASHES | JSON_UNESCAPED_UNICODE);
         $search = $replace = array();
 

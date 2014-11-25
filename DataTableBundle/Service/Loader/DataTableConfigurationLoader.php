@@ -63,13 +63,12 @@ class DataTableConfigurationLoader
         } else {
             $extra = array();
         }
-
         $configuration = new DataTableConfiguration($this->options[$configuration]['options'] + $extra);
 
         if ($columns instanceof ConfigurationColumnBag) {
             $configuration->set('columns', $columns);
         }
-        
+
         return $this->configuration[$configuration->getId()] = $configuration;
     }
     
@@ -78,9 +77,19 @@ class DataTableConfigurationLoader
      */
     public function getConfiguration($key = null)
     {
-        $key = $key ? $key : count($this->configuration) ? array_keys($this->configuration)[0] : null; 
-        
+        $key = $key ? $key : (count($this->configuration) ? array_keys($this->configuration)[0] : null);
+       
         return array_key_exists($key, $this->configuration) ? $this->configuration[$key] : null;
+    }
+    
+    public function setOptions(array $options)
+    {
+        $this->options = $options;
+    }
+    
+    public function getOptions()
+    {
+        return $this->options;
     }
     
     /**
