@@ -77,9 +77,17 @@ class DataTableConfigurationLoader
      */
     public function getConfiguration($key = null)
     {
-        $key = $key ? $key : (count($this->configuration) ? array_keys($this->configuration)[0] : null);
-       
-        return array_key_exists($key, $this->configuration) ? $this->configuration[$key] : null;
+        if (null === $key) {
+            return reset($this->configuration);
+        }
+        
+        foreach ($this->configuration as $configuration) {
+            if ($key == $configuration->getId()) {
+                return $configuration;
+            }
+        }
+
+        return null;
     }
     
     public function setOptions(array $options)
