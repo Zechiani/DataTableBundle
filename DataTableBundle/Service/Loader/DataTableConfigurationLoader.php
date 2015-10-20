@@ -63,31 +63,31 @@ class DataTableConfigurationLoader
         } else {
             $extra = array();
         }
+        
         $configuration = new DataTableConfiguration($this->options[$configuration]['options'] + $extra);
 
         if ($columns instanceof ConfigurationColumnBag) {
             $configuration->set('columns', $columns);
         }
 
-        return $this->configuration[$configuration->getId()] = $configuration;
+        return $configuration;
+    }
+    
+    public function setConfiguration(DataTableConfiguration $configuration)
+    {
+        $this->configuration[$configuration->getId()] = $configuration;
     }
     
     /**
      * @return \Zechiani\DataTableBundle\Model\Configuration\DataTableConfiguration
      */
-    public function getConfiguration($key = null)
+    public function getConfiguration($id = null)
     {
-        if (null === $key) {
+        if (null === $id) {
             return reset($this->configuration);
         }
         
-        foreach ($this->configuration as $configuration) {
-            if ($key == $configuration->getId()) {
-                return $configuration;
-            }
-        }
-
-        return null;
+        return $this->configuration[$id];
     }
     
     public function setOptions(array $options)
