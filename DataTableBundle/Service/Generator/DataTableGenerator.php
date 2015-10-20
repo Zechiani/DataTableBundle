@@ -32,9 +32,11 @@ abstract class DataTableGenerator implements InterfaceDataTableGenerator
      */
     public function load()
     {
-        $configuration = $this->container->get('zechiani_data_table.configuration_loader')->load($this->getConfigurationName(), $this->getConfigurationColumnBag());
+        $loader = $this->container->get('zechiani_data_table.configuration_loader');
         
-        $this->updateDataTableConfiguration($configuration);
+        $configuration = $this->updateDataTableConfiguration($loader->load($this->getConfigurationName(), $this->getConfigurationColumnBag()));
+        
+        $loader->setConfiguration($configuration);
         
         return $configuration;
     }
