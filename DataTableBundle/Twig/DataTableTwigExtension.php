@@ -15,12 +15,7 @@ class DataTableTwigExtension extends \Twig_Extension
     {
         $this->loader = $loader;
     }
-    
-    public function initRuntime(\Twig_Environment $environment)
-    {
-        $this->environment = $environment;
-    }
-    
+
     public function getFunctions()
     {
         return array(
