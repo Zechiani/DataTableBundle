@@ -19,22 +19,22 @@ class DataTableTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            new \Twig_SimpleFunction('dataTableRenderTable', [$this, 'dataTableRenderTable'], ['is_safe' => ['html']]),
-            new \Twig_SimpleFunction('dataTableRenderJavascript', [$this, 'dataTableRenderJavascript'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('dataTableRenderTable', [$this, 'dataTableRenderTable'], ['is_safe' => ['html'], 'needs_environment' => true]),
+            new \Twig_SimpleFunction('dataTableRenderJavascript', [$this, 'dataTableRenderJavascript'], ['is_safe' => ['html'], 'needs_environment' => true]),
         );
     }
     
-    public function dataTableRenderJavascript($id = null)
+    public function dataTableRenderJavascript(\Twig_Environment $twig, $id = null)
     {
         if (($configuration = $this->loader->getConfiguration($id)) !== null) {
-            return $this->environment->render($this->loader->getTemplate('javascript'), array('configuration' => $configuration));
+            return $twig->render($this->loader->getTemplate('javascript'), array('configuration' => $configuration));
         }
     }
     
-    public function dataTableRenderTable($id = null)
+    public function dataTableRenderTable(\Twig_Environment $twig, $id = null)
     {
         if (($configuration = $this->loader->getConfiguration($id)) !== null) {
-            return $this->environment->render($this->loader->getTemplate('table'), array('configuration' => $configuration));
+            return $twig->render($this->loader->getTemplate('table'), array('configuration' => $configuration));
         }
     }
     
