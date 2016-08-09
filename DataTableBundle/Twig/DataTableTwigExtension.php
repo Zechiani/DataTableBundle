@@ -24,8 +24,8 @@ class DataTableTwigExtension extends \Twig_Extension
     public function getFunctions()
     {
         return array(
-            'dataTableRenderTable' => new \Twig_Function_Method($this, 'dataTableRenderTable', array('is_safe' => array('html'))),
-            'dataTableRenderJavascript' => new \Twig_Function_Method($this, 'dataTableRenderJavascript', array('is_safe' => array('html'))),
+            new \Twig_SimpleFunction('dataTableRenderTable', [$this, 'dataTableRenderTable'], ['is_safe' => ['html']]),
+            new \Twig_SimpleFunction('dataTableRenderJavascript', [$this, 'dataTableRenderJavascript'], ['is_safe' => ['html']]),
         );
     }
     
